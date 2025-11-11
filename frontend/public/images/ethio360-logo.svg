@@ -1,0 +1,27 @@
+<svg width="140" height="70" viewBox="0 0 140 70" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer green circle/oval -->
+  <ellipse cx="35" cy="35" rx="32" ry="30" fill="none" stroke="#228B22" stroke-width="3"/>
+  
+  <!-- Inner decorative curves with Ethiopian flag colors -->
+  <path d="M 8 35 Q 20 20 35 25 Q 50 30 62 18" fill="none" stroke="#228B22" stroke-width="2.5"/>
+  <path d="M 8 37 Q 20 22 35 27 Q 50 32 62 20" fill="none" stroke="#FFD700" stroke-width="2.5"/>
+  <path d="M 8 39 Q 20 24 35 29 Q 50 34 62 22" fill="none" stroke="#DC143C" stroke-width="2.5"/>
+  
+  <!-- Additional decorative curves -->
+  <path d="M 12 45 Q 25 40 35 42 Q 45 44 58 40" fill="none" stroke="#228B22" stroke-width="1.5"/>
+  <path d="M 12 47 Q 25 42 35 44 Q 45 46 58 42" fill="none" stroke="#FFD700" stroke-width="1.5"/>
+  <path d="M 12 49 Q 25 44 35 46 Q 45 48 58 44" fill="none" stroke="#DC143C" stroke-width="1.5"/>
+  
+  <!-- Red arrow/flourish -->
+  <path d="M 58 15 Q 65 10 70 8 L 68 18 L 62 16 Z" fill="#DC143C"/>
+  
+  <!-- Ethiopian text "ኢትዮ" in elegant style -->
+  <text x="15" y="40" font-family="serif" font-size="16" font-weight="bold" fill="#DC143C" letter-spacing="1px">ኢትዮ</text>
+  
+  <!-- "360" in large, professional font -->
+  <text x="75" y="30" font-family="Arial Black, sans-serif" font-size="28" font-weight="900" fill="#228B22">360</text>
+  
+  <!-- Degree symbol -->
+  <circle cx="125" cy="20" r="3" fill="none" stroke="#228B22" stroke-width="1.5"/>
+  <text x="122" y="25" font-family="Arial, sans-serif" font-size="10" fill="#228B22">°</text>
+</svg>

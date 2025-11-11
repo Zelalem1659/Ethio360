@@ -19,7 +19,8 @@ const BreakingNewsAdmin = () => {
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/breaking-news-ticker');
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/admin/breaking-news-ticker`);
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages || []);
@@ -40,7 +41,8 @@ const BreakingNewsAdmin = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/breaking-news-ticker', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/breaking-news-ticker`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +67,8 @@ const BreakingNewsAdmin = () => {
 
   const updateMessage = async (id, updatedData) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/breaking-news-ticker/${id}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/breaking-news-ticker/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +95,8 @@ const BreakingNewsAdmin = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/breaking-news-ticker/${id}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/breaking-news-ticker/${id}`, {
         method: 'DELETE',
       });
 

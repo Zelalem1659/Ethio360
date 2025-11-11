@@ -12,7 +12,13 @@ def create_app():
     app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'jwt-secret-change-in-production')
     
     # Enable CORS for frontend
-    CORS(app, origins=['http://localhost:3000', 'http://localhost:3001'])
+    allowed_origins = [
+        'http://localhost:3000', 
+        'http://localhost:3001',
+        'https://ethio360.vercel.app',
+        'https://ethio360-*.vercel.app'  # Allow Vercel preview deployments
+    ]
+    CORS(app, origins=allowed_origins)
     
     @app.route('/')
     def index():
@@ -218,6 +224,7 @@ if __name__ == '__main__':
     app = create_app()
     print("🚀 Starting Ethio 360 Backend Server...")
     print("📰 Sample Ethiopian news data loaded!")
-    print("🌐 API available at: http://localhost:5000")
+    port = int(os.environ.get('PORT', 5000))
+    print(f"🌐 API available at: http://localhost:{port}")
     print("🔗 Frontend should connect from: http://localhost:3000")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, host='0.0.0.0', port=port)

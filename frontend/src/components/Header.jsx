@@ -27,7 +27,12 @@ const Header = () => {
   useEffect(() => {
     const fetchBreakingNews = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/breaking-news-ticker');
+        // Use environment-based API URL
+        const apiUrl = import.meta.env.PROD 
+          ? 'https://your-backend-url.com/api/breaking-news-ticker'
+          : 'http://localhost:5000/api/breaking-news-ticker';
+        
+        const response = await fetch(apiUrl);
         if (response.ok) {
           const data = await response.json();
           if (data.messages && data.messages.length > 0) {
@@ -41,7 +46,7 @@ const Header = () => {
       } catch (error) {
         console.error('Failed to fetch breaking news:', error);
         // Fallback message on error
-        setBreakingNews('📰 Welcome to Ethio360 - Your trusted source for Ethiopian news and updates');
+        setBreakingNews('📰 Ethio360 Announces Leadership Changes: New Board and Manager Appointed • Mrs. Liyou Tsegaye Elected as New General Manager • Washington D.C. Based Platform Enters New Phase of Innovation');
       }
     };
 

@@ -10,7 +10,12 @@ const HomePage = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/articles');
+        // Use environment-based API URL
+        const apiUrl = import.meta.env.PROD 
+          ? 'https://your-backend-url.com/api/articles'
+          : 'http://localhost:5000/api/articles';
+        
+        const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error('Failed to fetch articles');
         }

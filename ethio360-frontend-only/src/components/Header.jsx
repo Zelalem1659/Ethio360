@@ -19,7 +19,7 @@ const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [breakingNews, setBreakingNews] = useState('');
-  const { user, isAuthenticated, logout, canAccessPremium } = useAuth();
+  const { user, isAuthenticated, isAdmin, logout, canAccessPremium } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -60,6 +60,7 @@ const Header = () => {
     { name: 'Sports', amharic: 'ስፖርት', path: '/category/sports' },
     { name: 'Culture', amharic: 'ባህል', path: '/category/culture' },
     { name: 'International', amharic: 'ዓለም አቀፍ', path: '/category/international' },
+    { name: 'Bloggers', amharic: 'ብሎገሮች', path: '/bloggers' },
   ];
 
   const handleSearch = (e) => {
@@ -152,14 +153,16 @@ const Header = () => {
               </Link>
             ))}
             
-            {/* Temporary Admin Link for Development */}
-            <Link 
-              to="/admin" 
-              className={`nav-link ${isActivePath('/admin') ? 'nav-link-active' : ''} flex flex-col items-center`}
-            >
-              <span className="text-sm">Admin</span>
-              <span className="text-xs text-gray-500 font-amharic">አስተዳደር</span>
-            </Link>
+            {/* Admin Link - Only show for admin users */}
+            {isAuthenticated && isAdmin && (
+              <Link 
+                to="/admin" 
+                className={`nav-link ${isActivePath('/admin') ? 'nav-link-active' : ''} flex flex-col items-center`}
+              >
+                <span className="text-sm">Admin</span>
+                <span className="text-xs text-gray-500 font-amharic">አስተዳደር</span>
+              </Link>
+            )}
           </nav>
 
           {/* Search Bar */}
@@ -261,14 +264,17 @@ const Header = () => {
                       <Settings size={16} />
                       <span>Settings</span>
                     </Link>
-                    <Link
-                      to="/admin"
-                      className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 transition-colors"
-                      onClick={() => setIsProfileOpen(false)}
-                    >
-                      <Settings size={16} />
-                      <span>Admin Panel</span>
-                    </Link>
+                    {/* Admin Panel Link - Only show for admin users */}
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 transition-colors"
+                        onClick={() => setIsProfileOpen(false)}
+                      >
+                        <Crown size={16} />
+                        <span>Admin Panel</span>
+                      </Link>
+                    )}
                     <hr className="my-2" />
                     <button
                       onClick={handleLogout}

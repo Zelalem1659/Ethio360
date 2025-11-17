@@ -1,19 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BreakingNewsAdmin from '../components/BreakingNewsAdmin';
-import { Newspaper, Users, FileText, Heart } from 'lucide-react';
+import AdminBloggers from '../components/AdminBloggers';
+import { Newspaper, Users, FileText, Heart, Lock, PenTool } from 'lucide-react';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if admin is authenticated
+    const token = localStorage.getItem('access_token');
+    const userStr = localStorage.getItem('user');
+    
+    if (token && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.role === 'admin') {
+          setIsAuthenticated(true);
+        } else {
+          // Not an admin, redirect to login
+          navigate('/login');
+        }
+      } catch (error) {
+        // Invalid user data, redirect to login
+        navigate('/login');
+      }
+    } else {
+      // No authentication, redirect to login
+      navigate('/login');
+    }
+    
+    setLoading(false);
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="card p-8 max-w-md text-center">
+          <Lock className="mx-auto text-red-600 mb-4" size={48} />
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
+          <p className="text-gray-600 mb-6">
+            You need admin credentials to access this page.
+          </p>
+          <button
+            onClick={() => navigate('/login')}
+            className="btn-primary w-full"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: FileText },
     { id: 'breaking-news', label: 'Breaking News', icon: Newspaper },
+    { id: 'bloggers', label: 'Manage Bloggers', icon: PenTool },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
       case 'breaking-news':
         return <BreakingNewsAdmin />;
+      case 'bloggers':
+        return (
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              <AdminBloggers />
+            </div>
+          </div>
+        );
       default:
         return (
           <div className="container mx-auto px-4 py-8">

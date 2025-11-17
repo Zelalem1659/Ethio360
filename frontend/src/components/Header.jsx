@@ -64,6 +64,7 @@ const Header = () => {
     { name: 'Sports', amharic: 'ስፖርት', path: '/category/sports' },
     { name: 'Culture', amharic: 'ባህል', path: '/category/culture' },
     { name: 'International', amharic: 'ዓለም አቀፍ', path: '/category/international' },
+    { name: 'Bloggers', amharic: 'ብሎገሮች', path: '/bloggers' },
   ];
 
   const handleSearch = (e) => {

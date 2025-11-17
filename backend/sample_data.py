@@ -389,3 +389,6 @@ BREAKING_NEWS = [
 ]
 
 FEATURED_ARTICLES = [9, 1, 2, 3]  # Article IDs
+
+# Sample Blogger Posts Data
+BLOGGER_POSTS = []

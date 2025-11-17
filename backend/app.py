@@ -1,8 +1,9 @@
 import os
+import re
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
-from sample_data import SAMPLE_ARTICLES, BREAKING_NEWS, FEATURED_ARTICLES, BREAKING_NEWS_TICKER
+from sample_data import SAMPLE_ARTICLES, BREAKING_NEWS, FEATURED_ARTICLES, BREAKING_NEWS_TICKER, BLOGGER_POSTS
 
 def create_app():
     app = Flask(__name__)
@@ -15,6 +16,19 @@ def create_app():
     allowed_origins = [
         'http://localhost:3000', 
         'http://localhost:3001',
+        'http://localhost:3002',
+        'http://localhost:3003',
+        'http://localhost:3004',
+        'http://localhost:3005',
+        'http://localhost:3006',
+        'http://localhost:3007',
+        'http://localhost:3008',
+        'http://localhost:3009',
+        'http://localhost:3010',
+        'http://localhost:3011',
+        'http://localhost:3012',
+        'http://localhost:3013',
+        'http://localhost:3014',
         'https://ethio360.vercel.app',
         'https://ethio360-*.vercel.app'  # Allow Vercel preview deployments
     ]
@@ -218,6 +232,304 @@ def create_app():
             'total': len(all_messages)
         })
     
+    # Blogger Posts API Endpoints
+    @app.route('/api/bloggers', methods=['GET'])
+    def get_blogger_posts():
+        """Get all published blogger posts"""
+        published_posts = [post for post in BLOGGER_POSTS if post['is_published']]
+        # Sort by published date (newest first)
+        published_posts.sort(key=lambda x: x['published_at'], reverse=True)
+        
+        return jsonify({
+            'posts': published_posts,
+            'total': len(published_posts)
+        })
+    
+    @app.route('/api/bloggers/<slug>', methods=['GET'])
+    def get_blogger_post(slug):
+        """Get a specific blogger post by slug"""
+        post = next((post for post in BLOGGER_POSTS if post['slug'] == slug and post['is_published']), None)
+        if not post:
+            return jsonify({'error': 'Blogger post not found'}), 404
+        
+        # Increment view count (in a real app, you'd want to track unique views)
+        post['views'] += 1
+        
+        return jsonify(post)
+    
+    @app.route('/api/admin/bloggers', methods=['GET'])
+    def admin_get_all_blogger_posts():
+        """Get all blogger posts (including unpublished ones) for admin"""
+        all_posts = sorted(BLOGGER_POSTS, key=lambda x: x['updated_at'], reverse=True)
+        return jsonify({
+            'posts': all_posts,
+            'total': len(all_posts)
+        })
+    
+    @app.route('/api/admin/bloggers', methods=['POST'])
+    def admin_create_blogger_post():
+        """Create a new blogger post"""
+        data = request.get_json()
+        
+        if not data or not data.get('title') or not data.get('content'):
+            return jsonify({'error': 'Title and content are required'}), 400
+        
+        # Generate slug from title (simple version)
+        import re
+        slug = re.sub(r'[^a-zA-Z0-9\s-]', '', data['title'].lower())
+        slug = re.sub(r'\s+', '-', slug.strip())
+        
+        # Check if slug already exists
+        existing_post = next((post for post in BLOGGER_POSTS if post['slug'] == slug), None)
+        if existing_post:
+            slug = f"{slug}-{len(BLOGGER_POSTS) + 1}"
+        
+        # Get next ID
+        next_id = max([post['id'] for post in BLOGGER_POSTS], default=0) + 1
+        
+        from datetime import datetime
+        current_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+        
+        new_post = {
+            'id': next_id,
+            'title': data['title'],
+            'slug': slug,
+            'excerpt': data.get('excerpt', ''),
+            'content': data['content'],
+            'image': data.get('image', ''),
+            'author': {
+                'id': 1,
+                'name': "Admin",
+                'username': "admin",
+                'bio': "Ethio360 Administrator",
+                'avatar_url': "/avatars/admin.jpg"
+            },
+            'category': data.get('category', 'general'),
+            'tags': data.get('tags', []),
+            'published_at': current_time if data.get('is_published', False) else None,
+            'updated_at': current_time,
+            'is_published': data.get('is_published', False),
+            'views': 0,
+            'likes': 0,
+            'comments_count': 0
+        }
+        
+        BLOGGER_POSTS.append(new_post)
+        
+        return jsonify({
+            'message': 'Blogger post created successfully',
+            'post': new_post
+        }), 201
+    
+    @app.route('/api/admin/bloggers/<int:post_id>', methods=['PUT'])
+    def admin_update_blogger_post(post_id):
+        """Update an existing blogger post"""
+        data = request.get_json()
+        
+        # Find the post
+        post = next((post for post in BLOGGER_POSTS if post['id'] == post_id), None)
+        if not post:
+            return jsonify({'error': 'Blogger post not found'}), 404
+        
+        from datetime import datetime
+        current_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+        
+        # Update fields
+        if 'title' in data:
+            post['title'] = data['title']
+        if 'excerpt' in data:
+            post['excerpt'] = data['excerpt']
+        if 'content' in data:
+            post['content'] = data['content']
+        if 'image' in data:
+            post['image'] = data['image']
+        if 'category' in data:
+            post['category'] = data['category']
+        if 'tags' in data:
+            post['tags'] = data['tags']
+        if 'is_published' in data:
+            post['is_published'] = data['is_published']
+            if data['is_published'] and not post['published_at']:
+                post['published_at'] = current_time
+        
+        post['updated_at'] = current_time
+        
+        return jsonify({
+            'message': 'Blogger post updated successfully',
+            'post': post
+        })
+    
+    @app.route('/api/admin/bloggers/<int:post_id>', methods=['DELETE'])
+    def admin_delete_blogger_post(post_id):
+        """Delete a blogger post"""
+        global BLOGGER_POSTS
+        
+        # Find the post
+        post = next((post for post in BLOGGER_POSTS if post['id'] == post_id), None)
+        if not post:
+            return jsonify({'error': 'Blogger post not found'}), 404
+        
+        # Remove the post
+        BLOGGER_POSTS = [post for post in BLOGGER_POSTS if post['id'] != post_id]
+        
+        return jsonify({
+            'message': 'Blogger post deleted successfully'
+        })
+
+    # ==================== DONATION ENDPOINTS ====================
+    
+    @app.route('/api/donation/stripe', methods=['POST'])
+    def process_stripe_donation():
+        """Process donation via Stripe (Credit/Debit Card)"""
+        try:
+            data = request.get_json()
+            
+            # Validate required fields
+            required_fields = ['amount', 'cardNumber', 'expiryDate', 'cvv']
+            for field in required_fields:
+                if field not in data:
+                    return jsonify({'error': f'Missing required field: {field}'}), 400
+            
+            amount = float(data['amount'])
+            if amount < 1:
+                return jsonify({'error': 'Minimum donation amount is $1'}), 400
+            
+            # In production, you would integrate with Stripe API here
+            # For now, we'll simulate a successful payment
+            
+            # Simulated Stripe integration
+            # import stripe
+            # stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+            # 
+            # payment_intent = stripe.PaymentIntent.create(
+            #     amount=int(amount * 100),  # Convert to cents
+            #     currency='usd',
+            #     payment_method_types=['card'],
+            #     description=f"Donation to Ethio360 - {data.get('message', '')}"
+            # )
+            
+            # Simulate successful payment
+            transaction_id = f"txn_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+            
+            # Log donation (in production, save to database)
+            donation_record = {
+                'transaction_id': transaction_id,
+                'amount': amount,
+                'currency': 'usd',
+                'payment_method': 'stripe',
+                'recurring': data.get('recurring', False),
+                'donor_name': data.get('fullName', 'Anonymous'),
+                'donor_email': data.get('email'),
+                'message': data.get('message'),
+                'timestamp': datetime.now().isoformat(),
+                'status': 'completed'
+            }
+            
+            print(f"💰 Donation received: ${amount} from {donation_record['donor_name']}")
+            
+            return jsonify({
+                'success': True,
+                'transaction_id': transaction_id,
+                'amount': amount,
+                'message': 'Thank you for your generous donation!'
+            }), 200
+            
+        except ValueError as e:
+            return jsonify({'error': 'Invalid amount format'}), 400
+        except Exception as e:
+            print(f"Stripe donation error: {str(e)}")
+            return jsonify({'error': 'Payment processing failed. Please try again.'}), 500
+    
+    @app.route('/api/donation/paypal', methods=['POST'])
+    def process_paypal_donation():
+        """Initialize PayPal donation"""
+        try:
+            data = request.get_json()
+            
+            # Validate required fields
+            if 'amount' not in data:
+                return jsonify({'error': 'Missing required field: amount'}), 400
+            
+            amount = float(data['amount'])
+            if amount < 1:
+                return jsonify({'error': 'Minimum donation amount is $1'}), 400
+            
+            # In production, you would integrate with PayPal API here
+            # For now, we'll simulate the PayPal flow
+            
+            # Simulated PayPal integration
+            # from paypalrestsdk import Payment
+            # 
+            # payment = Payment({
+            #     "intent": "sale",
+            #     "payer": {"payment_method": "paypal"},
+            #     "redirect_urls": {
+            #         "return_url": "http://localhost:3000/donation/success",
+            #         "cancel_url": "http://localhost:3000/donation/cancel"
+            #     },
+            #     "transactions": [{
+            #         "amount": {
+            #             "total": str(amount),
+            #             "currency": "USD"
+            #         },
+            #         "description": f"Donation to Ethio360"
+            #     }]
+            # })
+            # 
+            # if payment.create():
+            #     for link in payment.links:
+            #         if link.rel == "approval_url":
+            #             approval_url = link.href
+            
+            # Simulate PayPal approval URL
+            transaction_id = f"pp_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+            approval_url = f"https://www.sandbox.paypal.com/checkoutnow?token={transaction_id}"
+            
+            # Log donation intent (in production, save to database)
+            donation_record = {
+                'transaction_id': transaction_id,
+                'amount': amount,
+                'currency': 'usd',
+                'payment_method': 'paypal',
+                'recurring': data.get('recurring', False),
+                'donor_name': data.get('fullName', 'Anonymous'),
+                'donor_email': data.get('email'),
+                'message': data.get('message'),
+                'timestamp': datetime.now().isoformat(),
+                'status': 'pending'
+            }
+            
+            print(f"💰 PayPal donation initialized: ${amount} from {donation_record['donor_name']}")
+            
+            return jsonify({
+                'success': True,
+                'transaction_id': transaction_id,
+                'approvalUrl': approval_url,
+                'amount': amount
+            }), 200
+            
+        except ValueError as e:
+            return jsonify({'error': 'Invalid amount format'}), 400
+        except Exception as e:
+            print(f"PayPal donation error: {str(e)}")
+            return jsonify({'error': 'Payment initialization failed. Please try again.'}), 500
+    
+    @app.route('/api/donation/verify/<transaction_id>', methods=['GET'])
+    def verify_donation(transaction_id):
+        """Verify donation status (useful for PayPal callback)"""
+        try:
+            # In production, query database for transaction status
+            # For now, return success for demo
+            return jsonify({
+                'success': True,
+                'transaction_id': transaction_id,
+                'status': 'completed',
+                'message': 'Donation verified successfully'
+            }), 200
+        except Exception as e:
+            print(f"Donation verification error: {str(e)}")
+            return jsonify({'error': 'Verification failed'}), 500
+
     return app
 
 if __name__ == '__main__':

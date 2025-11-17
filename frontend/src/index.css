@@ -34,11 +34,15 @@
   }
   
   .card {
-    @apply bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300;
+    @apply bg-white rounded-lg shadow-lg;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
   }
   
   .article-card {
-    @apply card overflow-hidden cursor-pointer transform hover:scale-105 transition-transform duration-300;
+    @apply card overflow-hidden cursor-pointer;
+    transform: translateZ(0);
   }
   
   .breaking-badge {

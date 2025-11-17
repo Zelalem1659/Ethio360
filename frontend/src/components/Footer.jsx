@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Facebook,
-  Twitter,
   Instagram,
   Youtube,
   Mail,
@@ -159,12 +158,15 @@ const Footer = () => {
                     <Facebook size={18} />
                   </a>
                   <a 
-                    href="https://twitter.com/ethio360" 
+                    href="https://x.com/ethio360" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="bg-gray-800 hover:bg-blue-400 p-2 rounded-lg transition-colors"
+                    className="bg-gray-800 hover:bg-black p-2 rounded-lg transition-colors"
+                    title="Follow us on X"
                   >
-                    <Twitter size={18} />
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
                   </a>
                   <a 
                     href="https://instagram.com/ethio360" 
@@ -198,7 +200,7 @@ const Footer = () => {
                   className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors"
                 >
                   <Heart size={18} />
-                  <span className="font-medium">Support Ethiopian Journalism</span>
+                  <span className="font-medium">Support Ethio-360</span>
                 </Link>
                 <div className="text-sm text-gray-300">
                   Help us keep Ethiopian news independent and free

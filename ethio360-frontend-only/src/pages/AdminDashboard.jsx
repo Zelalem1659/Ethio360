@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import BreakingNewsAdmin from '../components/BreakingNewsAdmin';
-import { Newspaper, Users, FileText, Heart } from 'lucide-react';
+import AdminBloggers from '../components/AdminBloggers';
+import { Newspaper, Users, FileText, Heart, PenTool } from 'lucide-react';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -8,12 +9,15 @@ const AdminDashboard = () => {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: FileText },
     { id: 'breaking-news', label: 'Breaking News', icon: Newspaper },
+    { id: 'bloggers', label: 'Bloggers', icon: PenTool },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
       case 'breaking-news':
         return <BreakingNewsAdmin />;
+      case 'bloggers':
+        return <AdminBloggers />;
       default:
         return (
           <div className="container mx-auto px-4 py-8">

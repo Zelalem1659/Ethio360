@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Crown } from 'lucide-react';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -20,6 +22,30 @@ const LoginPage = () => {
     }
     
     setLoading(false);
+  };
+
+  const handleAdminLogin = (e) => {
+    e.preventDefault();
+    
+    // Demo admin password: admin123
+    if (adminPassword === 'admin123') {
+      // Set admin user in localStorage for demo purposes
+      const adminUser = {
+        id: 1,
+        email: 'admin@ethio360.com',
+        name: 'Admin User',
+        role: 'admin'
+      };
+      
+      localStorage.setItem('access_token', 'demo-admin-token');
+      localStorage.setItem('user', JSON.stringify(adminUser));
+      
+      // Navigate to admin dashboard
+      navigate('/admin');
+      window.location.reload(); // Reload to update auth context
+    } else {
+      alert('Incorrect admin password. Default password is: admin123');
+    }
   };
 
   return (
@@ -95,6 +121,42 @@ const LoginPage = () => {
             </p>
           </div>
         </form>
+
+        {/* Admin Access Section */}
+        <div className="mt-8 pt-8 border-t border-gray-200">
+          <div className="text-center mb-4">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-full mb-2">
+              <Crown className="text-yellow-600" size={24} />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900">Admin Access</h3>
+            <p className="text-sm text-gray-600">Enter admin password to access the admin panel</p>
+          </div>
+          
+          <form onSubmit={handleAdminLogin} className="space-y-4">
+            <div>
+              <label htmlFor="adminPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                Admin Password
+              </label>
+              <input
+                id="adminPassword"
+                type="password"
+                required
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                className="input-field"
+                placeholder="Enter admin password"
+              />
+              <p className="text-xs text-gray-500 mt-1">Demo password: <code className="bg-gray-100 px-1 rounded">admin123</code></p>
+            </div>
+            
+            <button
+              type="submit"
+              className="btn-primary w-full bg-yellow-600 hover:bg-yellow-700"
+            >
+              Access Admin Panel
+            </button>
+          </form>
+        </div>
         </div>
         </div>
       </div>

@@ -7,6 +7,8 @@ import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import ArticlePage from './pages/ArticlePage';
 import CategoryPage from './pages/CategoryPage';
+import BloggersPage from './pages/BloggersPage';
+import BlogPostPage from './pages/BlogPostPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
@@ -40,6 +42,8 @@ function App() {
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/article/:slug" element={<ArticlePage />} />
                 <Route path="/category/:category" element={<CategoryPage />} />
+                <Route path="/bloggers" element={<BloggersPage />} />
+                <Route path="/bloggers/:slug" element={<BlogPostPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/profile" element={<ProfilePage />} />

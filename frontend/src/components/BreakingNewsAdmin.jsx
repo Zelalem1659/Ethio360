@@ -40,7 +40,8 @@ const BreakingNewsAdmin = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/breaking-news-ticker', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/breaking-news-ticker`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
